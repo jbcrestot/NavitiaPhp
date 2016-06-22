@@ -7,7 +7,6 @@ use CanalTP\NavitiaPhp\Navitia;
 class Coverage {
 
     private $navitia;
-    private $defaultCoverage;
 
     /**
      * Coverage constructor.
@@ -15,20 +14,31 @@ class Coverage {
     public function __construct(Navitia $navitia)
     {
         $this->navitia = $navitia;
-        $this->defaultCoverage = $navitia->getCoverge();
     }
 
     public function all()
     {
-        return $this->navitia->call('coverage');
+        return $this->navitia->call(array('coverage' => ''));
     }
 
+    /**
+     * get info relative to given coverage
+     *
+     * @param null/string $coverage
+     * @return json
+     * @throws \Canaltp\NavitiaPhp\Exception\NavitiaException
+     */
     public function get($coverage = null)
     {
-        if (is_null($coverage)) {
-            $coverage = $this->defaultCoverage;
+        if (empty($coverage)) {
+            return $this->navitia->call(array('path' => array()));
         }
 
-        return $this->navitia->call('coverage/'.$coverage);
+        return $this->navitia->call(array('path' => array('coverage' => $coverage)));
+    }
+
+    public function findByCoords($coords)
+    {
+        return $this->navitia->call(array('path' => array('coords' => $coords)));
     }
 }

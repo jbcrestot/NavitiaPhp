@@ -2,17 +2,18 @@
 
 namespace CanalTP\NavitiaPhp;
 
-use Canaltp\NavitiaPhp\Exception\NavitiaException;
+use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
-use Symfony\Component\Yaml\Yaml;
+use Canaltp\NavitiaPhp\Exception\NavitiaException;
 
 class Navitia
 {
     private $guzzle;
-    private $coverge;
+    private $defaultCoverage;
 
     /**
      * Navitia constructor.
@@ -20,23 +21,26 @@ class Navitia
     public function __construct(Client $guzzle, $coverage)
     {
         $this->guzzle = $guzzle;
-        $this->coverge = $coverage;
+        $this->defaultCoverage = $coverage;
     }
 
     /**
      * @return mixed
      */
-    public function getCoverge()
+    public function getDefaultCoverage()
     {
-        return $this->coverge;
+        return $this->defaultCoverage;
     }
 
-    public function call($NavitiaApi)
+    public function call($options)
     {
         try
         {
-            $result = $this->guzzle->get($NavitiaApi);
+            $this->configureOptions($options);
+
+            $result = $this->guzzle->get($this->buildUrl($options));
             if (200 !== $result->getStatusCode()) {
+
                 throw new NavitiaException();
             }
             
@@ -54,5 +58,37 @@ class Navitia
             dump('Something wrong happen');
             dump($e);
         }
+    }
+
+    public function configureOptions(&$options)
+    {
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(array(
+            'coverage' => $this->defaultCoverage,
+            'path'     => null,
+            'parameters' => null
+        ));
+
+        $options = $resolver->resolve($options);
+    }
+
+    private function buildUrl($options)
+    {
+        $url = 'coverage/'. $options['coverage'] .'/';
+
+        if (!empty($options['coverage'])) {
+            foreach ($options['path'] as $item) {
+                $url += $item['element'] .'/'. $item['value']. '/';
+            }
+        }
+
+        if (!empty($options['parameters'])) {
+            foreach ($options['parameters'] as $item) {
+                $url += $item['element'] .'/'. $item['value'];
+            }
+        }
+
+        return $url;
     }
 }
