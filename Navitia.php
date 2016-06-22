@@ -12,20 +12,30 @@ use Symfony\Component\Yaml\Yaml;
 class Navitia
 {
     private $guzzle;
+    private $coverge;
 
     /**
      * Navitia constructor.
      */
-    public function __construct(Client $guzzle)
+    public function __construct(Client $guzzle, $coverage)
     {
         $this->guzzle = $guzzle;
+        $this->coverge = $coverage;
     }
 
-    public function call($NavitiaRequest)
+    /**
+     * @return mixed
+     */
+    public function getCoverge()
+    {
+        return $this->coverge;
+    }
+
+    public function call($NavitiaApi)
     {
         try
         {
-            $result = $this->guzzle->get($NavitiaRequest);
+            $result = $this->guzzle->get($NavitiaApi);
             if (200 !== $result->getStatusCode()) {
                 throw new NavitiaException();
             }
