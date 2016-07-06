@@ -2,43 +2,40 @@
 
 namespace CanalTP\NavitiaPhp\Api;
 
-use CanalTP\NavitiaPhp\Navitia;
+use CanalTP\NavitiaPhp\Api\Api;
 
-class Coverage {
-
-    private $navitia;
-
+class Coverage extends Api
+{
     /**
-     * Coverage constructor.
+     * return a list of the areas covered by navitia
+     *
+     * @return string
+     * @throws \CanalTP\NavitiaPhp\Exception\NavitiaException
      */
-    public function __construct(Navitia $navitia)
-    {
-        $this->navitia = $navitia;
-    }
-
-    public function all()
+    public function getList()
     {
         return $this->navitia->call(array('coverage' => ''));
     }
 
     /**
-     * get info relative to given coverage
+     * get Information about a specific region
+     * if no coverage given, get information of the coverage you defined in Navitia
      *
      * @param null/string $coverage
-     * @return json
+     * @return string
      * @throws \Canaltp\NavitiaPhp\Exception\NavitiaException
      */
-    public function get($coverage = null)
+    public function getInformations($coverage = null)
     {
         if (empty($coverage)) {
-            return $this->navitia->call(array('path' => array()));
+            return $this->navitia->call(array());
         }
 
-        return $this->navitia->call(array('path' => array('coverage' => $coverage)));
+        return $this->navitia->call(array('coverage' => $coverage));
     }
 
-    public function findByCoords($coords)
-    {
-        return $this->navitia->call(array('path' => array('coords' => $coords)));
-    }
+    /**
+     * TODO: need to use coords as a filter
+     * @see http://doc.navitia.io/?shell#inverted-geocoding
+     */
 }

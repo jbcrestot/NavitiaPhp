@@ -7,7 +7,7 @@ class NavitiaException extends \Exception
     /**
      * NavitiaException constructor.
      */
-    public function __construct($message, $code, $previous)
+    public function __construct($message, $code, $previous = null)
     {
         if (empty($message)) {
             $message = 'Navitia API call didn\'t end as expected';
