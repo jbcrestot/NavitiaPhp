@@ -6,17 +6,12 @@ class NavitiaException extends \Exception
 {
     /**
      * NavitiaException constructor.
+     *
+     * @param string $message
+     * @param \Exception $previous
      */
-    public function __construct($message, $code, $previous = null)
+    public function __construct($message = 'Navitia API call didn\'t end as expected', $previous = null)
     {
-        if (empty($message)) {
-            $message = 'Navitia API call didn\'t end as expected';
-        }
-
-        if (empty($code)) {
-            $code = 500;
-        }
-
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, 0, $previous);
     }
 }
