@@ -7,6 +7,9 @@
     "authors": [
         {
             "name": "JB Crestot"
+        },
+        {
+            "name": "Julien Maulny"
         }
     ],
     "require": {

@@ -7,19 +7,29 @@ class QueryBuilder
     /**
      * @var string
      */
+    const ALL_COVERAGES = '';
+
+    /**
+     * @var string
+     */
     private $coverage = null;
 
     /**
      * @var string
      */
-    private $api = null;
+    private $path = null;
+
+    /**
+     * @var string[]
+     */
+    private $params = [];
 
     /**
      * @param string $coverage
      *
      * @return self
      */
-    public function coverage($coverage)
+    public function coverage($coverage = self::ALL_COVERAGES)
     {
         $this->coverage = $coverage;
 
@@ -27,13 +37,26 @@ class QueryBuilder
     }
 
     /**
-     * @param string $api
+     * @param string $path
      *
      * @return self
      */
-    public function api($api)
+    public function path($path)
     {
-        $this->api = $api;
+        $this->path = $path;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string $value
+     *
+     * @return self
+     */
+    public function param($name, $value)
+    {
+        $this->params[$name] = $value;
 
         return $this;
     }
@@ -44,22 +67,24 @@ class QueryBuilder
     public function getQuery()
     {
         $path = [];
-        $args = [];
 
         if (null !== $this->coverage) {
             $path []= 'coverage';
-            $path []= $this->coverage;
+
+            if (self::ALL_COVERAGES !== $this->coverage) {
+                $path []= $this->coverage;
+            }
         }
 
-        if (null !== $this->api) {
-            $path []= $this->api;
+        if (null !== $this->path) {
+            $path []= $this->path;
         }
 
         $uri = implode('/', $path);
 
-        if (count($args) > 0) {
+        if (count($this->params) > 0) {
             $uri .= '?';
-            $uri .= http_build_query($args);
+            $uri .= http_build_query($this->params);
         }
 
         return $uri;

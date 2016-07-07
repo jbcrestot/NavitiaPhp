@@ -15,6 +15,18 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', $query);
     }
 
+    public function testGetQueryToGetAllCoverages()
+    {
+        $queryBuilder = new QueryBuilder();
+
+        $query = $queryBuilder
+            ->coverage()
+            ->getQuery()
+        ;
+
+        $this->assertEquals('coverage', $query);
+    }
+
     public function testGetQueryWithCoverage()
     {
         $queryBuilder = new QueryBuilder();
@@ -27,12 +39,26 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('coverage/fr-idf', $query);
     }
 
+    public function testGetQueryWithQueryParameters()
+    {
+        $queryBuilder = new QueryBuilder();
+
+        $query = $queryBuilder
+            ->path('path')
+            ->param('foo', 'bar')
+            ->param('from', 'now')
+            ->getQuery()
+        ;
+
+        $this->assertEquals('path?foo=bar&from=now', $query);
+    }
+
     public function testGetQueryWithTrafficReports()
     {
         $queryBuilder = new QueryBuilder();
 
         $query = $queryBuilder
-            ->api('traffic_reports')
+            ->path('traffic_reports')
             ->coverage('fr-idf')
             ->getQuery()
         ;
