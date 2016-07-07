@@ -66,8 +66,9 @@ $client = Navitia::createFromBaseUrlAndToken('http://api.navitia.io/v1/', '3b036
 $queryBuilder = new QueryBuilder();
 
 $query = $queryBuilder
-    ->api('traffic_reports')
+    ->path('traffic_reports')
     ->coverage('fr-idf')
+    ->param('datetime', '20160615T1337')
     ->getQuery()
 ;
 
