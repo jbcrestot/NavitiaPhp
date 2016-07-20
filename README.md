@@ -29,9 +29,9 @@ require_once 'vendor/autoload.php';
 
 use CanalTP\NavitiaPhp\Navitia;
 
-$client = Navitia::createFromBaseUrlAndToken('http://api.navitia.io/v1/', '3b036afe-0110-4202-b9ed-99718476c2e0');
+$navitia = Navitia::createFromBaseUrlAndToken('http://api.navitia.io/v1/', '3b036afe-0110-4202-b9ed-99718476c2e0');
 
-$result = $client->call('coverage/sandbox');
+$result = $navitia->call('coverage/sandbox');
 /*
 Returns:
 
@@ -61,7 +61,7 @@ require_once 'vendor/autoload.php';
 use CanalTP\NavitiaPhp\Navitia;
 use CanalTP\NavitiaPhp\QueryBuilder;
 
-$client = Navitia::createFromBaseUrlAndToken('http://api.navitia.io/v1/', '3b036afe-0110-4202-b9ed-99718476c2e0');
+$navitia = Navitia::createFromBaseUrlAndToken('http://api.navitia.io/v1/', '3b036afe-0110-4202-b9ed-99718476c2e0');
 
 $queryBuilder = new QueryBuilder();
 
@@ -72,7 +72,7 @@ $query = $queryBuilder
     ->getQuery()
 ;
 
-$result = $client->call($query); // Calls 'coverage/fr-idf/traffic_reports'
+$result = $navitia->call($query); // Calls 'coverage/fr-idf/traffic_reports'
 ```
 
 
