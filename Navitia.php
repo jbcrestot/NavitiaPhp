@@ -5,6 +5,7 @@ namespace CanalTP\NavitiaPhp;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use CanalTP\NavitiaPhp\Exception\NavitiaException;
+use CanalTP\NavitiaPhp\QueryBuilder;
 
 class Navitia
 {
@@ -14,13 +15,20 @@ class Navitia
     private $httpClient;
 
     /**
+     * @var string|null
+     */
+    private $defaultCoverage;
+
+    /**
      * Navitia constructor.
      *
      * @param Client $httpClient
+     * @param string|null $defaultCoverage
      */
-    public function __construct(Client $httpClient)
+    public function __construct(Client $httpClient, $defaultCoverage = null)
     {
         $this->httpClient = $httpClient;
+        $this->defaultCoverage = $defaultCoverage;
     }
 
     /**
@@ -40,6 +48,20 @@ class Navitia
     }
 
     /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder()
+    {
+        $queryBuilder = new QueryBuilder();
+
+        if (null !== $this->defaultCoverage) {
+            $queryBuilder->coverage($this->defaultCoverage);
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
      * @return Client
      */
     public function getGuzzleClient()
@@ -55,6 +77,26 @@ class Navitia
     public function setGuzzleClient(Client $httpClient)
     {
         $this->httpClient = $httpClient;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDefaultCoverage()
+    {
+        return $this->defaultCoverage;
+    }
+
+    /**
+     * @param string|null $defaultCoverage
+     *
+     * @return self
+     */
+    public function setDefaultCoverage($defaultCoverage)
+    {
+        $this->defaultCoverage = $defaultCoverage;
 
         return $this;
     }
