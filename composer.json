@@ -1,24 +1,33 @@
 {
     "name": "canaltp/navitiaphp",
     "type": "library",
-    "description": "Component",
+    "description": "PHP client for Navitia (navitia.io).",
     "keywords": [],
     "license": "MIT",
     "authors": [
         {
-            "name": "Symfony Community",
-            "homepage": "https://symfony.com/contributors"
+            "name": "Jean-Baptiste Crestot"
+        },
+        {
+            "name": "Julien Maulny"
         }
     ],
     "require": {
-        "php": ">=5.5.9",
-        "guzzlehttp/guzzle": "~6.0",
-        "symfony/options-resolver": "~3.1"
+        "php": ">=5.4",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8",
+        "squizlabs/php_codesniffer": "2.x"
     },
     "autoload": {
-      "psr-4" : {
-        "CanalTP\\NavitiaPhp\\" : ""
-      }
+        "psr-4" : {
+            "CanalTP\\NavitiaPhp\\" : ""
+        }
     },
-    "minimum-stability": "dev"
+    "autoload-dev": {
+        "psr-4" : {
+            "CanalTP\\NavitiaPhp\\Tests\\" : "tests"
+        }
+    }
 }
