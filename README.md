@@ -1,3 +1,5 @@
+[![Build Status](https://scrutinizer-ci.com/g/jbcrestot/NavitiaPhp/badges/build.png?b=master)](https://scrutinizer-ci.com/g/jbcrestot/NavitiaPhp/build-status/master)
+
 # Navitia PHP client
 
 PHP client for Navitia API (http://navitia.io).
@@ -73,6 +75,18 @@ $query = $queryBuilder
 ;
 
 $result = $navitia->call($query); // Calls 'coverage/fr-idf/traffic_reports'
+```
+
+Using single navitia instance:
+``` php
+$navitia = new Navitia($myClient, 'myDefaultCoverage');
+
+$query = $navitia->createQueryBuilder()
+    ->path('traffic_reports')
+    ->param('datetime', '20160615T1337')
+    ->getQuery();
+    
+$result = $navitia->call($query);
 ```
 
 
