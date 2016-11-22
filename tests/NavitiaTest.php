@@ -2,61 +2,28 @@
 
 namespace CanalTP\NavitiaPhp\Tests;
 
+use CanalTP\AbstractGuzzle\GuzzleFactory;
 use CanalTP\NavitiaPhp\Navitia;
+use GuzzleHttp\Psr7\Response;
 
 class NavitiaTest extends \PHPUnit_Framework_TestCase
 {
     public function testCall()
     {
-        $navitiaBaseUrl = 'http://navitia-base.io/v1/';
-        $token = 'my-token';
-
-        $guzzleOptions = [
-            'base_uri' => $navitiaBaseUrl,
-            'auth' => [$token, ''],
-        ];
-
-        $responseMock = $this->getMockForAbstractClass('Psr\\Http\\Message\\ResponseInterface');
-
-        $responseMock
-            ->expects($this->any())
-            ->method('getBody')
-            ->willReturn('{"lines":"expected-lines"}')
-        ;
-
-        $clientMock = $this->getMock('GuzzleHttp\\Client', ['get'], [$guzzleOptions]);
-
-        $clientMock
-            ->expects($this->once())
-            ->method('get')
-            ->with('path/endpoint?my_arg=my_value')
-            ->willReturn($responseMock)
-        ;
+        $clientMock = GuzzleFactory::createClientMock([
+            new Response(200, [], '{"lines":"expected-lines"}'),
+        ]);
 
         $navitia = new Navitia($clientMock);
-
         $result = $navitia->call('path/endpoint?my_arg=my_value');
 
         $this->assertObjectHasAttribute('lines', $result);
         $this->assertEquals('expected-lines', $result->lines);
-
-        $configBaseUri = (string) $clientMock->getConfig('base_uri');
-        $this->assertEquals('http://navitia-base.io/v1/', $configBaseUri);
     }
 
     public function testCreateQueryBuilderWithDefaultCoverage()
     {
-        $navitiaBaseUrl = 'http://navitia-base.io/v1/';
-        $token = 'my-token';
-
-        $guzzleOptions = [
-            'base_uri' => $navitiaBaseUrl,
-            'auth' => [$token, ''],
-        ];
-
-        $clientMock = $this->getMock('GuzzleHttp\\Client', ['get'], [$guzzleOptions]);
-
-        $navitia = new Navitia($clientMock, 'default-coverage');
+        $navitia = new Navitia(GuzzleFactory::createClientMock([]), 'default-coverage');
 
         $queryBuilder = $navitia->createQueryBuilder();
 

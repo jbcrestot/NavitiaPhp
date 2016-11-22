@@ -2,6 +2,8 @@
 
 namespace CanalTP\NavitiaPhp;
 
+use CanalTP\AbstractGuzzle\Guzzle;
+use CanalTP\AbstractGuzzle\GuzzleFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use CanalTP\NavitiaPhp\Exception\NavitiaException;
@@ -21,11 +23,10 @@ class Navitia
 
     /**
      * Navitia constructor.
-     *
-     * @param Client $httpClient
-     * @param string|null $defaultCoverage
+     * @param Guzzle $httpClient
+     * @param null $defaultCoverage
      */
-    public function __construct(Client $httpClient, $defaultCoverage = null)
+    public function __construct(Guzzle $httpClient, $defaultCoverage = null)
     {
         $this->httpClient = $httpClient;
         $this->defaultCoverage = $defaultCoverage;
@@ -39,8 +40,7 @@ class Navitia
      */
     public static function createFromBaseUrlAndToken($navitiaBaseUrl, $token)
     {
-        $httpClient = new Client([
-            'base_uri' => $navitiaBaseUrl,
+        $httpClient = GuzzleFactory::createClient($navitiaBaseUrl,[
             'auth' => [$token, ''],
         ]);
 
@@ -62,7 +62,7 @@ class Navitia
     }
 
     /**
-     * @return Client
+     * @return Guzzle
      */
     public function getGuzzleClient()
     {
@@ -70,11 +70,11 @@ class Navitia
     }
 
     /**
-     * @param Client $httpClient
+     * @param Guzzle $httpClient
      *
      * @return self
      */
-    public function setGuzzleClient(Client $httpClient)
+    public function setGuzzleClient(Guzzle $httpClient)
     {
         $this->httpClient = $httpClient;
 
