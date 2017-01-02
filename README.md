@@ -95,9 +95,15 @@ $result = $navitia->call($query);
 Running tests:
 
 ``` bash
-vendor\bin\phpunit -c .
+vendor/bin/phpunit -c .
 ```
 
+## Checking code style:
+ 
+``` bash
+vendor/bin/phpcs src --standard=phpcs.xml
+```
+ 
 
 ## License
 

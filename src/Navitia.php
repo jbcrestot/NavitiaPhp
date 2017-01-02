@@ -2,19 +2,22 @@
 
 namespace CanalTP\NavitiaPhp;
 
+use Psr\Log\LoggerInterface;
 use CanalTP\AbstractGuzzle\Guzzle;
 use CanalTP\AbstractGuzzle\GuzzleFactory;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use CanalTP\NavitiaPhp\Exception\NavitiaException;
-use CanalTP\NavitiaPhp\QueryBuilder;
 
 class Navitia
 {
     /**
-     * @var Client
+     * @var Guzzle
      */
     private $httpClient;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @var string|null
@@ -24,11 +27,13 @@ class Navitia
     /**
      * Navitia constructor.
      * @param Guzzle $httpClient
-     * @param null $defaultCoverage
+     * @param string|null $defaultCoverage
+     * @param string|null $defaultToken
      */
-    public function __construct(Guzzle $httpClient, $defaultCoverage = null)
+    public function __construct(Guzzle $httpClient, LoggerInterface $logger = null, $defaultCoverage = null)
     {
         $this->httpClient = $httpClient;
+        $this->logger = $logger;
         $this->defaultCoverage = $defaultCoverage;
     }
 
@@ -40,9 +45,10 @@ class Navitia
      */
     public static function createFromBaseUrlAndToken($navitiaBaseUrl, $token)
     {
-        $httpClient = GuzzleFactory::createClient($navitiaBaseUrl,[
-            'auth' => [$token, ''],
-        ]);
+        $httpClient = GuzzleFactory::createClient(
+            $navitiaBaseUrl,
+            ['auth' => [$token, '']]
+        );
 
         return new self($httpClient);
     }
@@ -96,13 +102,18 @@ class Navitia
      */
     public function setDefaultCoverage($defaultCoverage)
     {
+        // in case of modification, we are warning user
+        if ($this->logger && $this->defaultCoverage !== $defaultCoverage) {
+            $this->logger->warning('don\'t forget to instantiate new QueryBuilder after setting new defaultCoverage');
+        }
+
         $this->defaultCoverage = $defaultCoverage;
 
         return $this;
     }
 
     /**
-     * @param sring $path
+     * @param string $path
      *
      * @return \stdClass
      *
@@ -114,7 +125,7 @@ class Navitia
             $result = $this->httpClient->get($path);
 
             return json_decode($result->getBody());
-        } catch (ClientException $e) {
+        } catch (\Exception $e) {
             throw new NavitiaException($e->getMessage(), $e);
         }
     }
